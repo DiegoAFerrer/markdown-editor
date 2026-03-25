@@ -4,14 +4,23 @@ const fs = require('fs');
 //registrar atajos globales
 app.on('ready', () => {
     globalShortcut.register('CommandOrControl+S', () => {
-        console.log('Saving the file');
-
-        const window = BrowserWindow.getFocusedWindow()
-        window.webContents.send('editor-event', 'save'); //mismo formato utilizado con las funciones del menu para envíar ordenes.
+       saveFile();
     });
 
     globalShortcut.register('CommandOrControl+O', () => {
-        const window = BrowserWindow.getFocusedWindow();
+        loadFile();
+    });
+});
+
+function saveFile(){
+    console.log('Saving the file');
+
+    const window = BrowserWindow.getFocusedWindow()
+    window.webContents.send('editor-event', 'save'); //mismo formato utilizado con las funciones del menu para envíar ordenes.
+}
+
+function loadFile(){
+    const window = BrowserWindow.getFocusedWindow();
         const options = {
         title: 'Pick a markdown file',
         filters: [
@@ -20,29 +29,18 @@ app.on('ready', () => {
             ]
         };
 
-    dialog.showOpenDialog(window, options, paths => {
-        if (paths && paths.length > 0) {
-                const content = fs.readFileSync(paths[0]).toString();
+        dialog.showOpenDialog(window, options).then(result => {
+            const filePaths = result.filePaths;
+            if (!result.canceled && filePaths && filePaths.length > 0) {
+                const content = fs.readFileSync(filePaths[0]).toString();
                 window.webContents.send('load', content);
-            }
-            });
-        });
 
-        /*dialog.showOpenDialog(window, options).then(file => {
-            if (file && file.length > 0) {
-                const content = fs.readFileSync(file[0]).toString();
-
-                window.webContents.send('load', content);
                 console.log('Opening File');
             } else{
                 console.log('File Canceled');
             };   
         })
-        .catch (error => {
-                console.error('Error reading file:', err); 
-            });
-    });*/
-});
+}
 
 
 
