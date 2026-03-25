@@ -78,6 +78,25 @@ ipcMain.on('editor-reply', (event, arg) => {
 //definir menu mediante JSON
 const template = [
     {
+        label: 'File',
+        submenu: [
+            {
+                label: 'Open',
+                accelerator: 'CommandOrControl+O',
+                click() {
+                    loadFile();
+                }
+            },
+            {
+                label: 'Save',
+                accelerator: 'CommandOrControl+S',
+                click(){
+                    saveFile();
+                }
+            }
+        ]
+    },
+    {
         label: 'Format',
         submenu: [
             {
